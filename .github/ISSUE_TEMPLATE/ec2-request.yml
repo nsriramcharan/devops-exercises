@@ -150,6 +150,17 @@ body:
     validations:
       required: false
 
+
+  # ---------------- EXPIRY ----------------
+  - type: input
+    id: expiry_date
+    attributes:
+      label: Expiry Date (YYYY-MM-DD)
+      description: "When should this infrastructure be decommissioned?"
+      placeholder: "2026-12-31"
+    validations:
+      required: true
+
   # ---------------- TAGGING ----------------
   - type: input
     id: project_name
