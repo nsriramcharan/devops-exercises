@@ -1,0 +1,173 @@
+name: EC2 Infrastructure Request
+description: Request EC2 provisioning
+title: "[EC2-REQUEST]"
+labels: ["ec2-request"]
+assignees:
+  - infra-approver
+
+body:
+
+  # ---------------- ENVIRONMENT ----------------
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Environment
+      options:
+        - dev
+        - qa
+        - prod
+    validations:
+      required: true
+
+  # ---------------- REGION ----------------
+  - type: dropdown
+    id: region
+    attributes:
+      label: AWS Region
+      options:
+        - ap-south-1
+        - us-east-1
+        - Other (Provide below)
+    validations:
+      required: true
+
+  - type: input
+    id: custom_region
+    attributes:
+      label: Custom Region
+    validations:
+      required: false
+
+  # ---------------- OS SELECTION ----------------
+  - type: dropdown
+    id: os_type
+    attributes:
+      label: Operating System
+      options:
+        - Ubuntu 22.04
+        - Amazon Linux 2
+        - RHEL 9
+        - Custom AMI
+    validations:
+      required: true
+
+  # ---------------- AMI ----------------
+  - type: dropdown
+    id: ami_default
+    attributes:
+      label: Default AMI (If not custom)
+      options:
+        - ami-ubuntu-ap-south-1
+        - ami-amazonlinux-ap-south-1
+        - ami-rhel-ap-south-1
+        - Other (Provide below)
+    validations:
+      required: true
+
+  - type: input
+    id: custom_ami
+    attributes:
+      label: Custom AMI ID
+    validations:
+      required: false
+
+  # ---------------- INSTANCE TYPE ----------------
+  - type: dropdown
+    id: instance_type
+    attributes:
+      label: Instance Type
+      options:
+        - t3.micro
+        - t3.small
+        - t3.medium
+        - Other (Provide below)
+    validations:
+      required: true
+
+  - type: input
+    id: custom_instance_type
+    attributes:
+      label: Custom Instance Type
+    validations:
+      required: false
+
+  # ---------------- NETWORK ----------------
+  - type: dropdown
+    id: subnet_id
+    attributes:
+      label: Subnet
+      options:
+        - subnet-dev-1
+        - subnet-qa-1
+        - subnet-prod-1
+        - Other (Provide below)
+    validations:
+      required: true
+
+  - type: input
+    id: custom_subnet
+    attributes:
+      label: Custom Subnet ID
+    validations:
+      required: false
+
+  - type: dropdown
+    id: security_groups_default
+    attributes:
+      label: Default Security Group
+      options:
+        - sg-web-default
+        - sg-app-default
+        - sg-db-default
+        - Other (Provide below)
+    validations:
+      required: true
+
+  - type: input
+    id: custom_security_groups
+    attributes:
+      label: Custom Security Group IDs (comma separated)
+    validations:
+      required: false
+
+  # ---------------- STORAGE ----------------
+  - type: dropdown
+    id: root_volume_size
+    attributes:
+      label: Root Volume Size
+      options:
+        - "20"
+        - "30"
+        - "50"
+        - Other (Provide below)
+    validations:
+      required: true
+
+  - type: input
+    id: custom_root_volume
+    attributes:
+      label: Custom Root Volume Size
+    validations:
+      required: false
+
+  # ---------------- TAGGING ----------------
+  - type: input
+    id: project_name
+    attributes:
+      label: Project Name
+    validations:
+      required: true
+
+  - type: input
+    id: owner
+    attributes:
+      label: Owner Name
+    validations:
+      required: true
+
+  - type: input
+    id: cost_center
+    attributes:
+      label: Cost Center
+    validations:
+      required: true
