@@ -8,7 +8,9 @@ body:
   - type: markdown
     attributes:
       value: |
-        ## Please provide a clear justification for why this S3 bucket is needed
+        ## Please provide the required details to provision an S3 bucket
+
+  - type: input
     id: bucket_name
     attributes:
       label: "Bucket Name"
