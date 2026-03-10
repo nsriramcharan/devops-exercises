@@ -1,0 +1,161 @@
+name: "S3 Bucket Request"
+description: "Request a new S3 bucket with specific compliance and project metadata."
+title: "[S3 Request]: "
+labels: ["provisioning", "s3"]
+
+body:
+
+  - type: markdown
+    attributes:
+      value: |
+        ## Please provide a clear justification for why this S3 bucket is needed
+    id: bucket_name
+    attributes:
+      label: "Bucket Name"
+      description: "Bucket name must be globally unique"
+      placeholder: "e.g., my-project-username-assets-bucket"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: versioning
+    attributes:
+      label: "Versioning"
+      options:
+        - "Enabled"
+        - "Disabled"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: encryption
+    attributes:
+      label: "Encryption"
+      options:
+        - "AES256"
+        - "AWS-KMS"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: public_access_block
+    attributes:
+      label: "Public Access Block"
+      description: "Recommended: Enabled"
+      options:
+        - "Enabled"
+        - "Disabled"
+    validations:
+      required: true
+
+  - type: input
+    id: project_name
+    attributes:
+      label: "Project Name"
+      placeholder: "payment-platform"
+    validations:
+      required: true
+
+  - type: input
+    id: project_owner
+    attributes:
+      label: "Project Owner"
+      placeholder: "John Doe"
+    validations:
+      required: true
+
+  - type: input
+    id: technical_owner_email
+    attributes:
+      label: "Technical Owner Email"
+      placeholder: "tech.owner@company.com"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: environment
+    attributes:
+      label: "Environment"
+      options:
+        - "Dev"
+        - "Test"
+        - "Prod"
+    validations:
+      required: true
+
+  - type: input
+    id: provisioned_by
+    attributes:
+      label: "Provisioned By"
+      description: "Person requesting this resource"
+      placeholder: "developer-name"
+    validations:
+      required: true
+
+  - type: input
+    id: expiry_date
+    attributes:
+      label: "Expiry Date"
+      description: "Resource expiry date (YYYY-MM-DD)"
+      placeholder: "2026-12-31"
+    validations:
+      required: true
+
+  - type: input
+    id: dm_email
+    attributes:
+      label: "DM Email"
+      placeholder: "dm@company.com"
+    validations:
+      required: true
+
+  - type: input
+    id: pceo_email
+    attributes:
+      label: "PCEO Email"
+      placeholder: "pceo@company.com"
+    validations:
+      required: true
+
+  - type: input
+    id: bu_name
+    attributes:
+      label: "BU Name"
+      placeholder: "Digital Payments"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: subscription_type
+    attributes:
+      label: "Subscription Type"
+      options:
+        - "Standard"
+        - "Premium"
+        - "Enterprise"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: information_asset_classification
+    attributes:
+      label: "Information Asset Classification"
+      options:
+        - "Public"
+        - "Internal"
+        - "Confidential"
+        - "Secret"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: business_impact
+    attributes:
+      label: "Business Impact"
+      options:
+        - "Low"
+        - "Medium"
+        - "High"
+        - "Critical"
+    validations:
+      required: true
