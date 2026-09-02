@@ -1,0 +1,97 @@
+name: POC Build, Test & Semantic Tagging
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: write # Required to create and push tags
+
+jobs:
+  # ========================================================
+  # Stage 1: Continuous Integration (Tests / Build Simulation)
+  # ========================================================
+  ci-checks:
+    name: Run Tests & Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Unit Tests
+        run: |
+          echo "Running tests..."
+          # Replace with your test command (e.g., npm test, pytest)
+          # To simulate a failure, change exit code to 1:
+          exit 0
+
+      - name: Build Code Artifacts
+        run: |
+          echo "Building microservice..."
+          exit 0
+
+  # ========================================================
+  # Stage 2: Version Tag Calculation & Push
+  # (Only runs if Stage 1 completely succeeds)
+  # ========================================================
+  create-tag:
+    name: Generate & Push Semantic Tag
+    needs: ci-checks
+    if: success() # Explicitly ensures no tag is cut if Stage 1 fails
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code with Full Git History
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetches full history and tags
+
+      - name: Calculate Next Version
+        id: semver
+        run: |
+          # 1. Fetch latest Git tag matching SemVer (X.Y.Z)
+          LATEST_TAG=$(git describe --tags --abbrev=0 --match "[0-9]*.[0-9]*.[0-9]*" 2>/dev/null || echo "")
+
+          # 2. Case A: If no tag exists, start at 1.0.0
+          if [ -z "$LATEST_TAG" ]; then
+            NEW_TAG="1.0.0"
+            echo "No existing tags found. Initializing to: $NEW_TAG"
+          else
+            echo "Current latest tag: $LATEST_TAG"
+            
+            # Split major, minor, patch into variables
+            IFS='.' read -r MAJOR MINOR PATCH <<< "$LATEST_TAG"
+
+            # Fetch merge commit title and message body
+            COMMIT_MSG=$(git log -1 --pretty=%B)
+            echo "Inspecting commit message:"
+            echo "$COMMIT_MSG"
+
+            # 3. Case B: Evaluate bump type
+            # Check for 'hotfix' or 'bugfix' in the commit title/merge source
+            if echo "$COMMIT_MSG" | grep -Ei "(hotfix|bugfix|fix:)"; then
+              echo "Detected hotfix/bugfix keyword. Bumping PATCH version."
+              PATCH=$((PATCH + 1))
+            else
+              echo "Standard feature/change detected. Bumping MINOR version."
+              MINOR=$((MINOR + 1))
+              PATCH=0
+            fi
+
+            NEW_TAG="${MAJOR}.${MINOR}.${PATCH}"
+          fi
+
+          echo "Calculated new tag: $NEW_TAG"
+          echo "new_tag=$NEW_TAG" >> $GITHUB_OUTPUT
+
+      - name: Create and Push Tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          
+          TAG="${{ steps.semver.outputs.new_tag }}"
+          
+          echo "Creating Git tag: $TAG"
+          git tag "$TAG"
+          git push origin "$TAG"
