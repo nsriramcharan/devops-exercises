@@ -1,2 +1,2 @@
-# devops-exercises 
+# devops-exercises  
 A repo for DevOps Practice
