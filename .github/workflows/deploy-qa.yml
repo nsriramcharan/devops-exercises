@@ -1,6 +1,10 @@
 name: Deploy to QA
 
 on:
+  push:
+    branches:
+      - develop
+
   workflow_dispatch:
     inputs:
       tag:
@@ -11,24 +15,23 @@ on:
 jobs:
 
   prepare:
-    name: Validate Tag
+    name: Prepare Deployment
     runs-on: ubuntu-latest
 
     outputs:
-      tag: ${{ steps.validate.outputs.tag }}
+      tag: ${{ steps.set-tag.outputs.tag }}
 
     steps:
-      - name: Validate input
-        id: validate
+      - name: Set deployment tag
+        id: set-tag
         run: |
-          TAG="${{ inputs.tag }}"
-
-          if [ -z "$TAG" ]; then
-            echo "❌ Tag is required."
-            exit 1
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            TAG="${{ inputs.tag }}"
+          else
+            TAG="${{ github.sha }}"
           fi
 
-          echo "Tag received: $TAG"
+          echo "Deployment tag: $TAG"
           echo "tag=$TAG" >> "$GITHUB_OUTPUT"
 
 
@@ -37,16 +40,18 @@ jobs:
     needs: prepare
     runs-on: ubuntu-latest
 
-    # GitHub will pause here and ask for approval
     environment:
-      name: test
+      name: qa-approval
 
     steps:
       - name: Approved - Deploy to QA
         run: |
-          echo "✅ Approved. Deploying tag: ${{ needs.prepare.outputs.tag }}"
-          echo "🚀 Deploying ${{ needs.prepare.outputs.tag }} to QA..."
+          echo "================================="
+          echo "✅ QA APPROVAL RECEIVED"
+          echo "================================="
+          echo "Deploying: ${{ needs.prepare.outputs.tag }}"
+          echo "🚀 Deploying to QA..."
 
       - name: Deployment completed
         run: |
-          echo "✅ Tag ${{ needs.prepare.outputs.tag }} deployed successfully to QA."
+          echo "✅ Deployment completed successfully."
