@@ -1,0 +1,52 @@
+name: Deploy to QA
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Enter the tag to deploy"
+        required: true
+        type: string
+
+jobs:
+
+  prepare:
+    name: Validate Tag
+    runs-on: ubuntu-latest
+
+    outputs:
+      tag: ${{ steps.validate.outputs.tag }}
+
+    steps:
+      - name: Validate input
+        id: validate
+        run: |
+          TAG="${{ inputs.tag }}"
+
+          if [ -z "$TAG" ]; then
+            echo "❌ Tag is required."
+            exit 1
+          fi
+
+          echo "Tag received: $TAG"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+
+  deploy-qa:
+    name: Deploy to QA
+    needs: prepare
+    runs-on: ubuntu-latest
+
+    # GitHub will pause here and ask for approval
+    environment:
+      name: test
+
+    steps:
+      - name: Approved - Deploy to QA
+        run: |
+          echo "✅ Approved. Deploying tag: ${{ needs.prepare.outputs.tag }}"
+          echo "🚀 Deploying ${{ needs.prepare.outputs.tag }} to QA..."
+
+      - name: Deployment completed
+        run: |
+          echo "✅ Tag ${{ needs.prepare.outputs.tag }} deployed successfully to QA."
