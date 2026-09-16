@@ -41,7 +41,7 @@ jobs:
     runs-on: ubuntu-latest
 
     environment:
-      name: qa-approval
+      name: test
 
     steps:
       - name: Approved - Deploy to QA
